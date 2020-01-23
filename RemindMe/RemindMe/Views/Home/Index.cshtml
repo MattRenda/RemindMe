@@ -1,0 +1,145 @@
+﻿@model RemindMe.Models.Email
+
+<style>
+    .test {
+        text-align: center;
+        font-size: 20px;
+        padding: 100px;
+    }
+
+    .top-space {
+        margin-top: 20px;
+    }
+
+    .btn {
+        margin: 0 auto;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0px;
+        text-align: center;
+        width: 99%;
+    }
+
+    .email {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 10px;
+    }
+</style>
+
+
+
+
+
+<div id="demo1"></div>
+<div id="demo2"></div>
+<div id="demo3"></div>
+<div id="demo4"></div>
+<div id="demo5"></div>
+
+
+
+
+<form method="POST">
+    <div class="test">Remind me... </div>
+    <div class="top-space center">
+
+        <input class="email" type="text" placeholder="Email" required name="email" />
+        About <input class="btn" type="text" name="name" required placeholder="dads birthday" />
+        on <input class="btn" type="date" name="date" required placeholder="saturday" />
+        at <input class="btn" type="time" name="time" required placeholder="7pm" />
+        <input class="btn" type="submit" value="submit Reminder" />
+    </div>
+</form>
+
+
+
+<script>
+   setInterval(RetrieveData, 60000);
+    var eventTime = [];
+    var eventDate = [];
+    var eventEmail = [];
+    var eventName = [];
+    var dataLength;
+
+    function RetrieveData() {
+
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            url: "../Home/RetrieveData",
+            success: function (data) {
+                var i = 0;
+                dataLength = Object.keys(data).length;
+                     while (i < dataLength) {
+                         eventTime[i] = (JSON.stringify(data[i].time));
+                         eventDate[i] = (JSON.stringify(data[i].date));
+                         eventEmail[i] = (JSON.stringify(data[i].email));
+                         eventName[i] = (JSON.stringify(data[i].name));
+                         i++;
+                }
+                checkForEvent();
+            },
+            error: function (a, jqXHR, exception) {
+                alert("FAILED");
+            }
+        });
+
+
+    }
+
+    function checkForEvent() {
+        var time2 = new Date();
+        var i = 0;
+       while (i < dataLength) {
+            // HOURS AND MINUTES SEPARATION
+            var temp = eventTime[i].split(":");
+            var hours = temp[0].replace('\"', '');
+            var minutes = temp[1].replace('\"', '');
+            // YEAR MONTH DAY SEPARATION
+            var temp = eventDate[i].split("-");
+            var year = temp[0].replace('\"', '');
+            var month = temp[1];
+            var day = temp[2].replace('\"', '');
+
+            // Email Separation
+            var email = eventEmail[i].replace('\"', '').replace('\"', '');
+
+
+            // CHECKING SPECIFIED TIME VS CURRENT TIME
+            if (time2.getFullYear() == year && time2.getMonth() + 1 == month && time2.getDate() == day && time2.getHours() == hours && time2.getMinutes() == minutes)
+            {
+                send(email);
+            }
+            
+            i++;
+        }
+        
+    }
+
+    function send(e) {
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            url: "../Home/SendData" + "?email="+e,
+            success: function (data) { alert('Email Sent!') },
+            error: function (a, jqXHR, exception) { }
+        });
+    }
+
+</script>
+
+
+
+
+
+
+

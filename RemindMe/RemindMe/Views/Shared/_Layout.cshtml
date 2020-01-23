@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+</head>
+<body>
+    @RenderBody()
+    <footer class="footer">
+        <p>&copy; @DateTime.Now.Year - RemindMe.com</p>
+    </footer>
+
+    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/jquery")
+
+</body>
+</html>
+
+<style>
+        .footer {
+        position: absolute;
+        bottom: 0px;
+        text-align: center;
+        width: 99%;
+    }
+</style>
